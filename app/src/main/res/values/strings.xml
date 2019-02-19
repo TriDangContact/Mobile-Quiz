@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Assignment2Java</string>
+    <string name="firstName">First (given) name:</string>
+    <string name="lastName">Family (last) name:</string>
+    <string name="nickName">Nickname:</string>
+    <string name="age">Age:</string>
+    <string name="score">Score:</string>
+    <string name="done">Done</string>
+    <string name="takeQuiz">Take a Quiz</string>
+    <string name="next">Next</string>
+    <string name="infoSaved_toast">Info Saved!</string>
+
+    <string name='question1'>Where did 2018 rank in terms of Earth’s average surface temperature</string>
+    <string name='question2'>Which countries signed the 1987 Intermediate-Range Nuclear Forces Treaty?</string>
+    <string name='question3'>Nayid Bukele was elected president of which country?</string>
+    <string name='question4'>How many combined points did the teams score in the last Super Bowl?</string>
+
+    <string name="answer1a">First</string>
+    <string name="answer1b">Fourth</string>
+    <string name="answer1c">Eighth</string>
+    <string name="answer1d">10th</string>
+
+    <string name="answer2a">Britain, China, France, Russia and the U.S.</string>
+    <string name="answer2b">China, India, Russia and the U.S.</string>
+    <string name="answer2c">China, Russia and the U.S.</string>
+    <string name="answer2d">Russia and the U.S.</string>
+
+    <string name="answer3a">El Salvador</string>
+    <string name="answer3b">Honduras</string>
+    <string name="answer3c">Nicaragua</string>
+    <string name="answer3d">Panama</string>
+
+    <string name="answer4a">7</string>
+    <string name="answer4b">10</string>
+    <string name="answer4c">16</string>
+    <string name="answer4d">21</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
