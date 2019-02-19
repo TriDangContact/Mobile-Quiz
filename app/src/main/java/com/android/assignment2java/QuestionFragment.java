@@ -1,9 +1,6 @@
 package com.android.assignment2java;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,8 +12,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 
 public class QuestionFragment extends Fragment {
@@ -45,6 +40,7 @@ public class QuestionFragment extends Fragment {
     private int mCurrentQuestion = 0;
     private String mSelectedAnswer = "";
 
+    //array that stores all the questions
     private Questions[] mQuestionArray = new Questions[] {
             new Questions(R.string.question1, R.string.answer1b, R.string.answer1a, R.string.answer1b
                     , R.string.answer1c, R.string.answer1d),
@@ -56,6 +52,10 @@ public class QuestionFragment extends Fragment {
                     R.string.answer4b, R.string.answer4c, R.string.answer4d)
     };
 
+
+    //interface that allows Fragment to pass data back to the host activity
+    //can be modified to pass back any type of data
+    //call passDataToActivity() to pass data
     public interface QuestionFragmentDataPasser {
         public void onQuestionFragmentData(int score);
     }
@@ -65,6 +65,7 @@ public class QuestionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_questions, container, false);
 
+        //wiring up various widgets
         questionView = (TextView) v.findViewById(R.id.questionView);
         radioGroup = (RadioGroup) v.findViewById(R.id.radio_group);
         radio_q1 = (RadioButton) v.findViewById(R.id.radio_q1);
@@ -73,24 +74,14 @@ public class QuestionFragment extends Fragment {
         radio_q4 = (RadioButton) v.findViewById(R.id.radio_q4);
         nextButton = (Button) v.findViewById(R.id.nextButton);
 
-
-        //retrieve the Questions object from the bundle
-//        Bundle bundle = getArguments();
-//        Questions question = (Questions) bundle.getSerializable("Question");
-//        mQuestion = getString(question.getTextRestID());
-//        mAnswer = getString(question.getAnswer());
-//        mOption1 = getString(question.getOption1());
-//        mOption2 = getString(question.getOption2());
-//        mOption3 = getString(question.getOption3());
-//        mOption4 = getString(question.getOption4());
-
-
         return v;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //check to make sure that the QuestionDataPasser interface was implemented in hosting
+        // activity in order to enable data passing from fragment to activity
         try {
             mQuestionFragmentData = (QuestionFragmentDataPasser)context;
         } catch (ClassCastException e) {
@@ -106,19 +97,20 @@ public class QuestionFragment extends Fragment {
         showOptions();
         hideNextButton();
 
+        //when next button is clicked, check if selected answer is correct. If it is the last
+        // question, then pass the score back to Activity and remove fragment. Else, show next
+        // question and hide the button
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (isCorrect(mSelectedAnswer)) {
                     mCurrentScore++;
                     Log.d(TAG, "Current Score: " +mCurrentScore);
                 }
-
                 //if it is the last question, finish the fragment
                 if (mCurrentQuestion == 3) {
                     //save the score and send it back to the hosting activity
-                    passScoreToActivity(mCurrentScore);
+                    passDataToActivity(mCurrentScore);
                     removeFragment();
                 }
                 else {
@@ -130,6 +122,7 @@ public class QuestionFragment extends Fragment {
             }
         });
 
+        //when a radio button is selected, get the value of that radio button
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -176,13 +169,9 @@ public class QuestionFragment extends Fragment {
         nextButton.setVisibility(View.VISIBLE);
     }
 
-    private void setScoreResult(int score) {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_SCORE, score);
-        ((QuestionsActivity) getActivity()).setResult(Activity.RESULT_OK, intent);
-    }
-
-    public void passScoreToActivity(int score) {
+    //method that uses the QuestionFragmentDataPasser interface to pass Fragment data back to
+    // Activity
+    public void passDataToActivity(int score) {
         if (mQuestionFragmentData != null) {
             Log.d(TAG, "Passing score to activity: " +score);
             mQuestionFragmentData.onQuestionFragmentData(score);
@@ -190,6 +179,7 @@ public class QuestionFragment extends Fragment {
         }
     }
 
+    //have the fragment remove itself from the fragmentmanager stack and Back stack
     private void removeFragment() {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         fm.beginTransaction().remove(this).commit();

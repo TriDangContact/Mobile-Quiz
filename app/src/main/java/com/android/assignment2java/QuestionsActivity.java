@@ -12,8 +12,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     private final static String EXTRA_SCORE = "com.android.assignment2.score";
     private final static String TAG = "QuestionActivity";
-
-
     private int mCurrentScore = 0;
 
     @Override
@@ -25,12 +23,9 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         addNewFragment();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
+    //this is called when the QuestionFragment is done. Retrieves the data from the fragment and
+    // remove the fragment from the stack. Then finish the activity and send the data back to
+    // original MainActivity
     @Override
     public void onQuestionFragmentData(int score) {
         mCurrentScore = score;
@@ -48,7 +43,6 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
         setResult(RESULT_OK, intent);
     }
 
-
     //add a new Fragment onto the stack
     private void addNewFragment() {
         FragmentManager fm = getSupportFragmentManager();
@@ -57,15 +51,5 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
             .add(R.id.fragment_container, fragment)
             .commit();
     }
-
-    //create a new Fragment with the current question and use it to replace the current Fragment on the stack
-//    private void replaceFragment() {
-//        FragmentManager fm = getSupportFragmentManager();
-//        Fragment fragment = new QuestionFragment();
-//        fm.beginTransaction()
-//                .replace(R.id.fragment_container, fragment)
-//                .addToBackStack(null)
-//                .commit();
-//    }
 
 }

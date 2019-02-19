@@ -10,8 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,16 +61,12 @@ public class MainActivity extends AppCompatActivity {
         mScoreView = (TextView) findViewById(R.id.scoreView);
         mReturnedScoreView = (EditText) findViewById(R.id.returnedscoreView);
 
+        //check if an internal file already exists. If so, retrieve user info from it
         if (fileExist(FILENAME)) {
             Log.d(TAG, "File exists");
-            try {
-                retrieveUserInfo();
-                updateUserInfoView();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            retrieveUserInfo();
+            updateUserInfoView();
         }
-        Log.d(TAG, "File doesn't exists");
 
         //done button should save user info to permanent storage
         mDoneButton.setOnClickListener(new OnClickListener() {
@@ -78,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         //Take Quiz button should take user to a new activity
         mQuizButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -87,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_QUESTIONS);
             }
         });
-        Log.d(TAG, "Current Score: " +mScore);
     }
 
-
+    //this is called after the quiz activity is finished
+    //retrieves the score the the quiz result and display it
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -110,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     //update the View with current data
     private void updateUserInfoView() {
         Log.d(TAG, "updateUserInfoView() called");
@@ -120,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         mAgeView.setText(String.valueOf(mAge));
     }
 
-
+    //save entered info into internal storage
     private void saveUserInfo() {
         Log.d(TAG, "saveUserInfo() called");
         mFirstName = mFirstNameView.getText().toString();
@@ -131,32 +127,38 @@ public class MainActivity extends AppCompatActivity {
                 "First Name: " + mFirstName + " Last Name: " + mLastName + " Nickname: " + mNickName +
                         " Age: " + mAge);
         try {
-            FileOutputStream fileOS = openFileOutput(FILENAME, MODE_PRIVATE);
+            Context context = getApplicationContext();
+            FileOutputStream fileOS = context.openFileOutput(FILENAME, MODE_PRIVATE);
             OutputStreamWriter outputSW = new OutputStreamWriter(fileOS);
-            outputSW.write(mFirstName+"\n");
-            outputSW.write(mLastName+"\n");
-            outputSW.write(mNickName+"\n");
-            outputSW.write(mAge+"\n");
-            fileOS.close();
+            BufferedWriter bufferedWriter = new BufferedWriter(outputSW);
+            bufferedWriter.write(mFirstName+"\n");
+            bufferedWriter.write(mLastName+"\n");
+            bufferedWriter.write(mNickName+"\n");
+            bufferedWriter.write(mAge+"\n");
+            bufferedWriter.close();
+            Toast.makeText(getBaseContext(), "File saved!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-
     //reads data from internal file storage and retrieve it
-    private void retrieveUserInfo() throws FileNotFoundException {
+    private void retrieveUserInfo() {
         Log.d(TAG, "retrieveUserInfo() called");
+//        Context context = getApplicationContext();
+        try {
         Context context = getApplicationContext();
         FileInputStream fileIS = context.openFileInput(FILENAME);
         InputStreamReader inputSR = new InputStreamReader(fileIS);
         BufferedReader bufferedReader = new BufferedReader(inputSR);
-        try {
+
+//            Log.d(TAG, "Reading File: " +bufferedReader.readLine());
             mFirstName = bufferedReader.readLine();
             mLastName = bufferedReader.readLine();
             mNickName = bufferedReader.readLine();
             mAge = parseInt(bufferedReader.readLine());
+            bufferedReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
 
     //check if an internal file exists already
     private boolean fileExist(String fname) {
-//        File file = getBaseContext().getFileStreamPath(fname);
         File file = new File(getApplicationContext().getFilesDir(), fname);
         return file.exists();
     }
