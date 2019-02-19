@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -12,6 +11,7 @@ public class QuestionsActivity extends AppCompatActivity implements QuestionFrag
 
     private final static String EXTRA_SCORE = "com.android.assignment2.score";
     private final static String TAG = "QuestionActivity";
+
     private int mCurrentScore = 0;
 
     @Override

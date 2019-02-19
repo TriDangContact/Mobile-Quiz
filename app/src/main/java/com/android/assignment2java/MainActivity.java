@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private String mLastName = "";
     private String mNickName = "";
     private int mAge = 0;
+    private boolean mQuizTaken = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +80,15 @@ public class MainActivity extends AppCompatActivity {
         mQuizButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, QuestionsActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_QUESTIONS);
+                //make sure user enters all info
+                if (userInfoEmpty()) {
+                    Toast.makeText(getBaseContext(), R.string.emptyInfo_toast,
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(MainActivity.this, QuestionsActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE_QUESTIONS);
+                }
             }
         });
     }
@@ -99,10 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult called, requestCode = " +requestCode+ ", resultCode " +
                         "= " +resultCode+ ", score = " +mScore);
                 //set the score and show it
-                if (mScore != -1) {
-                    mReturnedScoreView.setText(String.valueOf(mScore));
-                    showScore();
-                }
+                mReturnedScoreView.setText(String.valueOf(mScore));
+                saveUserInfo();
+                showScore();
             }
         }
     }
@@ -131,12 +137,17 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fileOS = context.openFileOutput(FILENAME, MODE_PRIVATE);
             OutputStreamWriter outputSW = new OutputStreamWriter(fileOS);
             BufferedWriter bufferedWriter = new BufferedWriter(outputSW);
+            //save the score if a quiz was taken
+            if (mScore != -1) {
+                bufferedWriter.write("True\n");
+                bufferedWriter.write(mScore+"\n");
+            }
             bufferedWriter.write(mFirstName+"\n");
             bufferedWriter.write(mLastName+"\n");
             bufferedWriter.write(mNickName+"\n");
             bufferedWriter.write(mAge+"\n");
             bufferedWriter.close();
-            Toast.makeText(getBaseContext(), "File saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.infoSaved_toast, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,13 +159,22 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "retrieveUserInfo() called");
 //        Context context = getApplicationContext();
         try {
-        Context context = getApplicationContext();
-        FileInputStream fileIS = context.openFileInput(FILENAME);
-        InputStreamReader inputSR = new InputStreamReader(fileIS);
-        BufferedReader bufferedReader = new BufferedReader(inputSR);
-
-//            Log.d(TAG, "Reading File: " +bufferedReader.readLine());
-            mFirstName = bufferedReader.readLine();
+            Context context = getApplicationContext();
+            FileInputStream fileIS = context.openFileInput(FILENAME);
+            InputStreamReader inputSR = new InputStreamReader(fileIS);
+            BufferedReader bufferedReader = new BufferedReader(inputSR);
+            String firstLine = bufferedReader.readLine();
+            //if a quiz was taken, then the next line is the quiz score
+            if (firstLine.equals("True")) {
+                mScore = parseInt(bufferedReader.readLine());
+                mReturnedScoreView.setText(String.valueOf(mScore));
+                mFirstName = bufferedReader.readLine();
+                showScore();
+            }
+            //otherwise, the first line is first name
+            else {
+                mFirstName = firstLine;
+            }
             mLastName = bufferedReader.readLine();
             mNickName = bufferedReader.readLine();
             mAge = parseInt(bufferedReader.readLine());
@@ -162,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     //check if an internal file exists already
@@ -176,5 +195,12 @@ public class MainActivity extends AppCompatActivity {
         mReturnedScoreView.setVisibility(View.VISIBLE);
     }
 
-
+    //check to see if any of the input fields are empty
+    private boolean userInfoEmpty() {
+        if (mFirstNameView.getText().toString().isEmpty() || mLastNameView.getText().toString().isEmpty()
+                || mNickNameView.getText().toString().isEmpty() || mAgeView.getText().toString().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 }

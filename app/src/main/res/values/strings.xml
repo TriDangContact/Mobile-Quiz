@@ -9,6 +9,7 @@
     <string name="takeQuiz">Take a Quiz</string>
     <string name="next">Next</string>
     <string name="infoSaved_toast">Info Saved!</string>
+    <string name="emptyInfo_toast">Please fill out all field before taking quiz</string>
 
     <string name='question1'>Where did 2018 rank in terms of Earth’s average surface temperature</string>
     <string name='question2'>Which countries signed the 1987 Intermediate-Range Nuclear Forces Treaty?</string>
@@ -35,6 +36,4 @@
     <string name="answer4c">16</string>
     <string name="answer4d">21</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

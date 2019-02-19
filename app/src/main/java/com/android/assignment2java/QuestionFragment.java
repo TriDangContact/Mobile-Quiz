@@ -19,13 +19,13 @@ public class QuestionFragment extends Fragment {
     private final static String TAG = "QuestionFragment";
     private final static String EXTRA_SCORE = "com.android.assignment2.score";
 
-    private TextView questionView;
-    private RadioGroup radioGroup;
-    private RadioButton radio_q1;
-    private RadioButton radio_q2;
-    private RadioButton radio_q3;
-    private RadioButton radio_q4;
-    private Button nextButton;
+    private TextView mQuestionView;
+    private RadioGroup mRadioGroup;
+    private RadioButton mRadio_q1;
+    private RadioButton mRadio_q2;
+    private RadioButton mRadio_q3;
+    private RadioButton mRadio_q4;
+    private Button mNextButton;
 
     //interface that allows fragment to pass back data to hosting activity
     QuestionFragmentDataPasser mQuestionFragmentData;
@@ -66,13 +66,13 @@ public class QuestionFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_questions, container, false);
 
         //wiring up various widgets
-        questionView = (TextView) v.findViewById(R.id.questionView);
-        radioGroup = (RadioGroup) v.findViewById(R.id.radio_group);
-        radio_q1 = (RadioButton) v.findViewById(R.id.radio_q1);
-        radio_q2 = (RadioButton) v.findViewById(R.id.radio_q2);
-        radio_q3 = (RadioButton) v.findViewById(R.id.radio_q3);
-        radio_q4 = (RadioButton) v.findViewById(R.id.radio_q4);
-        nextButton = (Button) v.findViewById(R.id.nextButton);
+        mQuestionView = (TextView) v.findViewById(R.id.questionView);
+        mRadioGroup = (RadioGroup) v.findViewById(R.id.radio_group);
+        mRadio_q1 = (RadioButton) v.findViewById(R.id.radio_q1);
+        mRadio_q2 = (RadioButton) v.findViewById(R.id.radio_q2);
+        mRadio_q3 = (RadioButton) v.findViewById(R.id.radio_q3);
+        mRadio_q4 = (RadioButton) v.findViewById(R.id.radio_q4);
+        mNextButton = (Button) v.findViewById(R.id.nextButton);
 
         return v;
     }
@@ -100,7 +100,7 @@ public class QuestionFragment extends Fragment {
         //when next button is clicked, check if selected answer is correct. If it is the last
         // question, then pass the score back to Activity and remove fragment. Else, show next
         // question and hide the button
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isCorrect(mSelectedAnswer)) {
@@ -123,7 +123,7 @@ public class QuestionFragment extends Fragment {
         });
 
         //when a radio button is selected, get the value of that radio button
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 showNextButton();
@@ -135,12 +135,11 @@ public class QuestionFragment extends Fragment {
                 }
             }
         });
-
     }
 
     private void showQuestion() {
         mQuestion = getString(mQuestionArray[mCurrentQuestion].getTextRestID());
-        questionView.setText(mQuestion);
+        mQuestionView.setText(mQuestion);
     }
 
     private void showOptions() {
@@ -149,10 +148,10 @@ public class QuestionFragment extends Fragment {
         mOption3 = getString(mQuestionArray[mCurrentQuestion].getOption3());
         mOption4 = getString(mQuestionArray[mCurrentQuestion].getOption4());
 
-        radio_q1.setText(mOption1);
-        radio_q2.setText(mOption2);
-        radio_q3.setText(mOption3);
-        radio_q4.setText(mOption4);
+        mRadio_q1.setText(mOption1);
+        mRadio_q2.setText(mOption2);
+        mRadio_q3.setText(mOption3);
+        mRadio_q4.setText(mOption4);
     }
 
     private boolean isCorrect(String selectedAnswer) {
@@ -162,11 +161,11 @@ public class QuestionFragment extends Fragment {
     }
 
     private void hideNextButton() {
-        nextButton.setVisibility(View.INVISIBLE);
+        mNextButton.setVisibility(View.INVISIBLE);
     }
 
     private void showNextButton() {
-        nextButton.setVisibility(View.VISIBLE);
+        mNextButton.setVisibility(View.VISIBLE);
     }
 
     //method that uses the QuestionFragmentDataPasser interface to pass Fragment data back to
@@ -175,7 +174,6 @@ public class QuestionFragment extends Fragment {
         if (mQuestionFragmentData != null) {
             Log.d(TAG, "Passing score to activity: " +score);
             mQuestionFragmentData.onQuestionFragmentData(score);
-
         }
     }
 
